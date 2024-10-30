@@ -1,7 +1,4 @@
-using System.Xml.Linq;
-
 namespace Markdown.AbstractClasses;
-
 public abstract class BaseMarkdownToken
 {
     public List<BaseMarkdownToken> Children { get; } = new List<BaseMarkdownToken>();
@@ -9,6 +6,6 @@ public abstract class BaseMarkdownToken
     {
         Children.Add(child);
     }
-
+    public abstract TokenNamesEnum TokenName { get; }
     public abstract string ToHtml();
 }

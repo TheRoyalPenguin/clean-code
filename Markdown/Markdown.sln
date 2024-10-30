@@ -1,8 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Markdown", "Markdown\Markdown.csproj", "{1050496D-914E-478C-9B08-929F091E84D7}"
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35312.102
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Markdown", "Markdown\Markdown.csproj", "{1050496D-914E-478C-9B08-929F091E84D7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkdownTests", "MarkdownTests\MarkdownTests.csproj", "{0B0058D0-28DD-4A54-91C2-A1A4DAE38EA5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MarkdownTests", "MarkdownTests\MarkdownTests.csproj", "{0B0058D0-28DD-4A54-91C2-A1A4DAE38EA5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,5 +21,11 @@ Global
 		{0B0058D0-28DD-4A54-91C2-A1A4DAE38EA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0B0058D0-28DD-4A54-91C2-A1A4DAE38EA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0B0058D0-28DD-4A54-91C2-A1A4DAE38EA5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {19D4837F-43BA-4957-B459-52769CA29869}
 	EndGlobalSection
 EndGlobal

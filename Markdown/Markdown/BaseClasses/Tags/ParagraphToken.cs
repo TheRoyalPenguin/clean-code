@@ -2,11 +2,13 @@
 
 namespace Markdown.Tags;
 
-public class ParagraphToken: BaseMarkdownToken
+public class ParagraphToken : BaseMarkdownToken
 {
+    public override TokenNamesEnum TokenName { get; } = TokenNamesEnum.Paragraph;
     public override string ToHtml()
     {
-        var htmlResultString = string.Join("", Children.Select(child => child.ToHtml()));
+        // Дополнительно разделяем пробелами "слова"
+        var htmlResultString = string.Join("", Children.Select((child, i) => i != 0 ? " " + child.ToHtml() : child.ToHtml()));
         return "<p>" + htmlResultString + "</p>";
     }
 }
