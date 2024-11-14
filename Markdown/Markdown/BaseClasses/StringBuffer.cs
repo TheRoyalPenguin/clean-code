@@ -23,13 +23,13 @@ public class StringBuffer
     {
         Buffer = c + Buffer;
     }
-    public int RemoveEscapeSymbolsFromEndString()
-    {
-        Buffer = Buffer.Substring(0, Buffer.Length - CountEscapeSymbolsAtEndString);
-        int temp = CountEscapeSymbolsAtEndString;
-        CountEscapeSymbolsAtEndString = 0;
-        return temp;
-    }
+    //public int RemoveEscapeSymbolsFromEndString()
+    //{
+    //    Buffer = Buffer.Substring(0, Buffer.Length - CountEscapeSymbolsAtEndString);
+    //    int temp = CountEscapeSymbolsAtEndString;
+    //    CountEscapeSymbolsAtEndString = 0;
+    //    return temp;
+    //}
     public void Clear()
     {
         Buffer = "";

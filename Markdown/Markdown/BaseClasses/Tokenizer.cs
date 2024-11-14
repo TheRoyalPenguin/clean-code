@@ -39,8 +39,6 @@ public class Tokenizer
 
             mainToken.Children.Add(rootToken);
 
-
-            //bool isFirstWord = true;
             foreach (var word in wordsMarkdownTextParagraph)
             {
                 //обновляем стек для нового слова
@@ -60,45 +58,17 @@ public class Tokenizer
                     }
                     Console.WriteLine();
                 }
-                //Dictionary<string, int> tagsFoundedCount = new Dictionary<string, int> { { "_", 0 }, { "__", 0 }, { "<", 0 }, { ">", 0 } };
                 StringBuffer readParagraphBuffer = new StringBuffer();
 
                 for (int i = 0; i < word.Length; i++)
                 {
-                    //if (isFirstWord && i == 0 && word[0] == '#')
-                    //{
-                    //    isFirstWord = false;
-                    //    continue;
-                    //}
                     if (i + 1 < word.Length && word[i] == '_' && word[i + 1] == '_' && !(word.ToString().Any(char.IsDigit) && i != 0 && i != word.Length - 1) && characterProcessingSequence[TokenNamesEnum.Bold].Count > 0 && characterProcessingSequence[TokenNamesEnum.Bold].Dequeue() == 1)
                     {
-                        //if (pointerToCurrentTokenStack.Peek().Item1.TokenName == TokenNamesEnum.Bold)
-                        //{
-                        //    var tempToken = new TextToken(word.Substring(pointerToCurrentTokenStack.Peek().Item2 + 2, (i - 1) - (pointerToCurrentTokenStack.Peek().Item2 + 1)));
-                        //    pointerToCurrentTokenStack.Pop().Item1.Children.Add(tempToken);
-                        //}
-                        //else
-                        //{
-                        //    var tempToken = new BoldToken();
-                        //    pointerToCurrentTokenStack.Peek().Item1.Children.Add(tempToken);
-                        //    pointerToCurrentTokenStack.Push((tempToken, i));
-                        //}
                         ManagePointerStack(word, pointerToCurrentTokenStack, TokenNamesEnum.Bold, readParagraphBuffer);
                         i += 1;
                     }
                     else if (word[i] == '_' && !(word.ToString().Any(char.IsDigit) && i!=0 && i!=word.Length-1) && characterProcessingSequence[TokenNamesEnum.Italics].Count > 0 && characterProcessingSequence[TokenNamesEnum.Italics].Dequeue() == 1)
                     {
-                        //if (pointerToCurrentTokenStack.Peek().Item1.TokenName == TokenNamesEnum.Italics)
-                        //{
-                        //    var tempToken = new TextToken(word.Substring(pointerToCurrentTokenStack.Peek().Item2 + 1, (i - 1) - pointerToCurrentTokenStack.Peek().Item2));
-                        //    pointerToCurrentTokenStack.Pop().Item1.Children.Add(tempToken);
-                        //}
-                        //else
-                        //{
-                        //    var tempToken = new ItalicsToken();
-                        //    pointerToCurrentTokenStack.Peek().Item1.Children.Add(tempToken);
-                        //    pointerToCurrentTokenStack.Push((tempToken, i));
-                        //}
                         ManagePointerStack(word, pointerToCurrentTokenStack, TokenNamesEnum.Italics, readParagraphBuffer);
                     }
                     else if (characterProcessingSequence[TokenNamesEnum.LinkStart].Count > 0 && characterProcessingSequence[TokenNamesEnum.LinkStart].Peek() == 1 && word[i] == '<')
@@ -213,10 +183,11 @@ public class Tokenizer
             {TokenNamesEnum.LinkEnd, new Queue<int>()},
             {TokenNamesEnum.Escaping, new Queue<int>()}
         };
-        //Dictionary<string, int> tagsCount = GetTagsCount(s);
+
         Dictionary<TokenNamesEnum, int> tagsFound = new Dictionary<TokenNamesEnum, int> { { TokenNamesEnum.Bold, 0 }, { TokenNamesEnum.Italics, 0 }, { TokenNamesEnum.LinkStart, 0 }, { TokenNamesEnum.LinkEnd, 0 }, { TokenNamesEnum.Escaping, 0 } };
         string lastTag = "";
         int consecutiveEscapeCharactersCount = 0;
+
         for (int i = 0; i < s.Length; i++)
         {
             if (s[i] == '\\')
@@ -241,30 +212,10 @@ public class Tokenizer
             }
             else if (!(lastTag == "_" && tagsFound[TokenNamesEnum.Italics] % 2 != 0) && lastTag != "<" && ((i == 0 || !isEscapingSupported) || (isEscapingSupported && i > 0 && !(s[i - 1] == '\\' && consecutiveEscapeCharactersCount%2!=0))) && i + 1 < s.Length && s[i] == '_' && s[i + 1] == '_')
             {
-                //if (lastTag == "_" && tagsCount["_"]%2!=0)
-                //{
-                //    tagsCount["_"] -= 1;
-                //    characterProcessingSequence[TokenNamesEnum.Italics].Dequeue();
-                //    characterProcessingSequence[TokenNamesEnum.Italics].Enqueue(0);
-                //}
-                //tagsCount["__"]--;
                 characterProcessingSequence[TokenNamesEnum.Bold].Enqueue(1);
                 lastTag = "__";
                 i += 1;
             }
-            //else if (!(lastTag == "_" && tagsCount["_"] % 2 != 0 && tagsCount["__"] % 2 == 0) && lastTag != "<" && isEscapingSupported && i > 0 && s[i - 1] != '\\' && i + 1 < s.Length && s[i] == '_' && s[i + 1] == '_')
-            //{
-            //    if (lastTag == "_" && tagsCount["_"] % 2 != 0)
-            //    {
-            //        tagsCount["_"] -= 1;
-            //        characterProcessingSequence[TokenNamesEnum.Italics].Dequeue();
-            //        characterProcessingSequence[TokenNamesEnum.Italics].Enqueue(0);
-            //    }
-            //    tagsCount["__"]++;
-            //    characterProcessingSequence[TokenNamesEnum.Bold].Enqueue(1);
-            //    lastTag = "__";
-            //    i += 1;
-            //}
             else if (lastTag != "<" && s[i] == '_' && (!isEscapingSupported || i == 0 || i > 0 && s[i - 1] != '\\'))
             {
                 lastTag = "_";
@@ -278,13 +229,11 @@ public class Tokenizer
             else if (s[i] == '>' && (!isEscapingSupported || i == 0 || i > 0 && s[i - 1] != '\\'))
             {
                 lastTag = ">";
-                //tagsCount[">"]--;
                 characterProcessingSequence[TokenNamesEnum.LinkStart].Enqueue(1);
             }
             else if (lastTag != "<" && s[i] == '<' && (!isEscapingSupported || i == 0 || i > 0 && s[i - 1] != '\\'))
             {
                 lastTag = "<";
-                //tagsCount["<"]--;
                 characterProcessingSequence[TokenNamesEnum.LinkEnd].Enqueue(1);
             }
             else if (s[i] == '<')
@@ -302,112 +251,8 @@ public class Tokenizer
                 characterProcessingSequence[TokenNamesEnum.Bold].Enqueue(0);
             }
         }
-
         return characterProcessingSequence;
-
-        // !!!Устарело, тк теперь пустые токены обрабатывают сами себя!!!
-        // Убираем незакрытые теги из последовательности обработки
-        //foreach (var item in tagsFound)
-        //{
-        //    if (item.Value % 2 != 0)
-        //    {
-        //        var tempQueue = characterProcessingSequence[item.Key];
-        //        var backupQueueElements = new Stack<int>();
-        //        for (int i = tempQueue.Count - 1; i >= 0; i--)
-        //        {
-        //            if (tempQueue.Peek() == 1)
-        //            {
-        //                tempQueue.Dequeue();
-        //                tempQueue.Enqueue(0);
-        //                foreach (var item1 in backupQueueElements)
-        //                {
-        //                    tempQueue.Enqueue(item1);
-        //                }
-        //                break;
-        //            }
-        //            else
-        //            {
-        //                backupQueueElements.Push(tempQueue.Dequeue());
-        //            }
-        //        }
-        //    }
-        //}
-
-        //Dictionary<string, int> tagsCount = new Dictionary<string, int> { { "_", 0 }, { "__", 0 }, { "<", 0 }, { ">", 0 } };
-        //string lastTag = "";
-        //for (int i = 0; i < s.Length; i++)
-        //{
-        //    if (!(lastTag == "_" && tagsCount["_"] % 2 !=0 && tagsCount["__"] % 2 == 0) && lastTag != "<" && (i == 0 || !isEscapingSupported) && i + 1 < s.Length && s[i] == '_' && s[i + 1] == '_')
-        //    {
-        //        tagsCount["__"]++;
-        //        lastTag = "__";
-        //        i += 1;
-        //    }
-        //    else if (!(lastTag == "_" && tagsCount["_"] % 2 !=0 && tagsCount["__"] % 2 == 0) && lastTag != "<" && isEscapingSupported && i > 0 && s[i - 1] != '\\' && i + 1 < s.Length && s[i] == '_' && s[i + 1] == '_')
-        //    {
-        //        tagsCount["__"]++;
-        //        lastTag = "__";
-        //        i += 1;
-        //    }
-        //    else if (lastTag != "<" && s[i] == '_')
-        //    {
-        //        if (!isEscapingSupported || i == 0 || i > 0 && s[i - 1] != '\\')
-        //        {
-        //            lastTag = "_";
-        //            tagsCount["_"]++;
-        //        }
-        //    }
-        //    else if (s[i] == '>')
-        //    {
-        //        if (!isEscapingSupported || i == 0 || i > 0 && s[i - 1] != '\\')
-        //        {
-        //            lastTag = ">";
-        //            tagsCount[">"]++;
-        //        }
-        //    }
-        //    else if (lastTag != "<" && s[i] == '<')
-        //    {
-        //        if (!isEscapingSupported || i == 0 || i > 0 && s[i - 1] != '\\')
-        //        {
-        //            lastTag = "<";
-        //            tagsCount["<"]++;
-        //        }
-        //    }
-        //}
-        //return tagsCount;
     }
-
-    //Dictionary<string, int> GetTagsCount(string s)
-    //{
-    //    Dictionary<string, int> tagsCount = new Dictionary<string, int> { { "__", 0 }, { "_", 0 }, { "<", 0 }, { ">", 0 } };
-    //    string lastTag = "";
-    //    for (int i = 0; i < s.Length; i++)
-    //    {
-    //        if (!(lastTag == "_" && tagsCount["_"] % 2 != 0 && tagsCount["__"] % 2 == 0) && lastTag != "<" && ((i == 0 || !isEscapingSupported) || (isEscapingSupported && i > 0 && s[i - 1] != '\\')) && i + 1 < s.Length && s[i] == '_' && s[i + 1] == '_')
-    //        {
-    //            tagsCount["__"]++;
-    //            lastTag = "__";
-    //            i += 1;
-    //        }
-    //        else if (lastTag != "<" && s[i] == '_' && (!isEscapingSupported || i == 0 || i > 0 && s[i - 1] != '\\'))
-    //        {
-    //            lastTag = "_";
-    //            tagsCount["_"]++;
-    //        }
-    //        else if (s[i] == '>' && (!isEscapingSupported || i == 0 || i > 0 && s[i - 1] != '\\'))
-    //        {
-    //            lastTag = ">";
-    //            tagsCount[">"]++;
-    //        }
-    //        else if (lastTag != "<" && s[i] == '<' && (!isEscapingSupported || i == 0 || i > 0 && s[i - 1] != '\\'))
-    //        {
-    //            lastTag = "<";
-    //            tagsCount["<"]++;
-    //        }
-    //    }
-    //    return tagsCount;
-    //}
-
     T? GetElementOfStackByIndex<T>(Stack<T> stack, int index)
     {
         List<T> extractedElementsOfStack = new List<T>();
@@ -433,15 +278,4 @@ public class Tokenizer
         }
         return default;
     }
-
-    //int GetCountDuplicateCharactersFromBeginningString(string s, char symbol)
-    //{
-    //    int count = 0;
-    //    foreach (char c in s)
-    //    {
-    //        if (c == symbol) count++;
-    //        else break;
-    //    }
-    //    return count;
-    //}
 }

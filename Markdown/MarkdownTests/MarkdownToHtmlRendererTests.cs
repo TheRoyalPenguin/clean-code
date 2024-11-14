@@ -24,20 +24,10 @@ public class MarkdownToHtmlRendererTests
     [InlineData("t_est tes_t", "<p>t_est tes_t</p>")]
     [InlineData("_te__s_t__", "<p><em>te</em><em>s</em>t__</p>")]
     [InlineData("#_test_", "<h1><em>test</em></h1>")]
-    public void Render_RenderMarkdownToHtml(string markdown, string expectedHtml)
+    private void Render_RenderMarkdownToHtml(string markdown, string expectedHtml)
     {
         var result = renderer.Render(markdown);
 
         Assert.Equal(expectedHtml, result);
     }
-
-    //[Fact]
-    //public void Render_CursiveText_ReturnHtmlEmTag()
-    //{
-    //    var processor = new MarkdownToHtmlBackup();
-    //    string markdownText = "_Проверка текста с заменой на em_test@_";
-    //    string expectedText = "<em>Проверка текста с заменой на em</em>test@_";
-    //    var result = processor.Render(markdownText);
-    //    Assert.Equal(expectedText, result);
-    //}
 }
