@@ -1,9 +1,18 @@
 const inputField = document.getElementById('inputField');
 const outputField = document.getElementById('outputField');
 
-async function processMarkdownText() {
-    try {
+let requestTimer;
+
+inputField.addEventListener("input", async () => {
+    clearTimeout(requestTimer);
+    requestTimer = setTimeout(async () => {
         const inputText = inputField.value;
+        await processMarkdownText(inputText);
+    }, 250);
+});
+
+async function processMarkdownText(inputText) {
+    try {
         const response = await fetch("/markdown-to-html-convert", {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
