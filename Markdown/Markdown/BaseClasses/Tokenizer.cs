@@ -1,4 +1,5 @@
-﻿using Markdown.AbstractClasses;
+﻿using System.Text.RegularExpressions;
+using Markdown.AbstractClasses;
 using Markdown.Tags;
 
 namespace Markdown.BaseClasses;
@@ -9,7 +10,7 @@ public class Tokenizer
     public MainToken Tokenize(string markdownText)
     {
         // Если пришел пустой текст отдаем его обратно:)
-        if (markdownText.Length == 0)
+         if (markdownText.Length == 0)
         {
             return new MainToken();
         }
@@ -23,9 +24,18 @@ public class Tokenizer
         foreach (var markdownTextParagraph in markdownTextParagraphs)
         {
             var pointerToCurrentTokenStack = new Stack<BaseMarkdownToken>();
-            string[] wordsMarkdownTextParagraph = markdownTextParagraph.Split(" ");
+            // string[] wordsMarkdownTextParagraph = markdownTextParagraph.Split(" ", StringSplitOptions.RemoveEmptyEntries);
 
-            if (markdownTextParagraph != null && markdownTextParagraph.Length != 0 && markdownTextParagraph[0] == '#')
+            string pattern = @"(\s+|\S+)";
+            // \s+ один или более пробелов
+            // \S+ один или более непробельных символов
+            MatchCollection matches = Regex.Matches(markdownTextParagraph, pattern);
+            string[] wordsMarkdownTextParagraph = matches
+                .Cast<Match>() // преобразуем MatchCollection в IEnumerable<Match>
+                .Select(m => m.Value)
+                .ToArray();
+
+            if (markdownTextParagraph != null && markdownTextParagraph.Length != 0 && markdownTextParagraph.TrimStart()[0] == '#')
             {
                 rootToken = new HeaderToken();
                 pointerToCurrentTokenStack.Push(rootToken);
@@ -39,10 +49,12 @@ public class Tokenizer
 
             mainToken.Children.Add(rootToken);
 
-            foreach (var word in wordsMarkdownTextParagraph)
-            {
-                //обновляем стек для нового слова
-                pointerToCurrentTokenStack = new Stack<BaseMarkdownToken>();
+            //не нужно, теперь строки целиком обрабатываются
+            //foreach (var word in wordsMarkdownTextParagraph)
+            //{
+            var word = string.Join("", wordsMarkdownTextParagraph);
+            //обновляем стек для нового слова
+            pointerToCurrentTokenStack = new Stack<BaseMarkdownToken>();
                 WordToken wordToken = new WordToken();
                 rootToken.Children.Add(wordToken);
                 pointerToCurrentTokenStack.Push(wordToken);
@@ -91,7 +103,7 @@ public class Tokenizer
                 {
                     pointerToCurrentTokenStack.Peek().Children.Add(new TextToken(readParagraphBuffer.Buffer));
                 }
-            }
+            //}
         }
 
         return mainToken;
