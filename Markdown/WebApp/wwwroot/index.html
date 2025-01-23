@@ -1,16 +1,29 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Конвертер markdown в html</title>
-  <link rel="stylesheet" href="style.css"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Конвертер markdown в html</title>
+    <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-  <div class="container">
-    <textarea class="field" id="inputField" placeholder="Введите markdown текст..." required></textarea>
-    <div class="field" id="outputField" readonly placeholder="Здесь появится html разметка"></div>
-  </div>
-  <script src="script.js"></script>
+    <div class="container">
+        <div id="inputContainer">
+              <textarea class="field" id="inputField" placeholder="Введите markdown текст..." required></textarea>
+              <button id="fullscreenInputButton" class="fullscreenButton">⛶</button>
+        </div>
+        <div id="outputContainer">
+            <div class="field" id="outputField"></div>
+            <button id="fullscreenOutputButton" class="fullscreenButton">⛶</button>
+        </div>
+        <div class="fieldButtons">
+            <button class="button" id="copyHtmlButton">Скопировать html</button>
+            <button class="button" id="downloadHtmlButton">Скачать html страницу</button>
+            <button class="button">Что-то...</button>
+            <p id="messageField"></p>
+            <button class="button" id="openFullscreenButton">Полноэкранный режим</button>
+        </div>
+     </div>
+   <script src="script.js"></script>
 </body>
 </html>
