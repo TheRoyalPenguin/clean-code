@@ -25,7 +25,7 @@ public class Tokenizer
             var pointerToCurrentTokenStack = new Stack<BaseMarkdownToken>();
             string[] wordsMarkdownTextParagraph = markdownTextParagraph.Split(" ");
 
-            if (markdownTextParagraph[0] == '#')
+            if (markdownTextParagraph != null && markdownTextParagraph.Length != 0 && markdownTextParagraph[0] == '#')
             {
                 rootToken = new HeaderToken();
                 pointerToCurrentTokenStack.Push(rootToken);
@@ -49,15 +49,15 @@ public class Tokenizer
 
 
                 Dictionary<TokenNamesEnum, Queue<int>> characterProcessingSequence = GetCharacterProcessingSequence(word);
-                foreach (var tag in characterProcessingSequence)
-                {
-                    Console.Write(tag.Key + ":");
-                    foreach (var token in tag.Value)
-                    {
-                        Console.Write(token);
-                    }
-                    Console.WriteLine();
-                }
+                //foreach (var tag in characterProcessingSequence)
+                //{
+                //    Console.Write(tag.Key + ":");
+                //    foreach (var token in tag.Value)
+                //    {
+                //        Console.Write(token);
+                //    }
+                //    Console.WriteLine();
+                //}
                 StringBuffer readParagraphBuffer = new StringBuffer();
 
                 for (int i = 0; i < word.Length; i++)

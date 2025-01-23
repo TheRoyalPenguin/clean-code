@@ -9,6 +9,10 @@ public class ParagraphToken : BaseMarkdownToken
     {
         // Дополнительно разделяем пробелами "слова"
         var htmlResultString = string.Join("", Children.Select((child, i) => i != 0 ? " " + child.ToHtml() : child.ToHtml()));
-        return "<p>" + htmlResultString + "</p>";
+        if (string.IsNullOrWhiteSpace(htmlResultString) )
+        {
+            return "<br>";
+        }
+        else return "<p>" + htmlResultString + "</p>";
     }
 }

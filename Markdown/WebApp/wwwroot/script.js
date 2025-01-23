@@ -7,7 +7,12 @@ inputField.addEventListener("input", async () => {
     clearTimeout(requestTimer);
     requestTimer = setTimeout(async () => {
         const inputText = inputField.value;
-        await processMarkdownText(inputText);
+        if (!inputText) {
+            outputField.textContent = "";
+        }
+        else {
+            await processMarkdownText(inputText);
+        }
     }, 250);
 });
 
@@ -21,7 +26,7 @@ async function processMarkdownText(inputText) {
 
         const result = await response.json();
         if (response.ok) {
-            outputField.textContent = result.HtmlText;
+            outputField.innerHTML = result.HtmlText;
         } else {
             console.log('Ошибка.');
         }

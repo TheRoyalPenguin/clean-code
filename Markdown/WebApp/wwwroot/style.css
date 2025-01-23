@@ -1,6 +1,7 @@
 body {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
     font-family: Arial, sans-serif;
     background-color: #2d2a4a;
     color: #fff;
@@ -14,6 +15,7 @@ body {
     display: flex;
     gap: 20px;
     width: 90%;
+    align-items: center;
 }
 
 .field {
