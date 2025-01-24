@@ -13,38 +13,23 @@ const openFullscreenButton = document.getElementById('openFullscreenButton');
 
 let requestTimer;
 
+// при перезагрузке страницы
+setHtmlTextToOutputField();
+
 inputField.addEventListener("input", async () => {
-    clearTimeout(requestTimer);
-    requestTimer = setTimeout(async () => {
-        const inputText = inputField.value;
-        if (!inputText) {
-            outputField.textContent = "";
-        }
-        else {
-            await processMarkdownText(inputText);
-        }
-    }, 250);
+    await setHtmlTextToOutputField();
 });
 
 // копирование html кода
 copyHtmlButton.addEventListener('click', () => {
-    const htmlContent = outputField.innerHTML;
+    copyHtmlContent();
+});
 
-    try {
-        const textarea = document.createElement('textarea');
-        textarea.value = htmlContent;
+// перехватываем событие копирования
+outputField.addEventListener('copy', (event) => {
+    event.preventDefault(); // отмена стандартного копирования
 
-        document.body.appendChild(textarea);
-        textarea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textarea);
-
-        changeTextTemporarily(messageField, 'Скопировано', 'green', 5000);
-        console.log('Копирование в буфер обмена успешно!');
-    } catch (err) {
-        changeTextTemporarily(messageField, 'Ошибка при копировании', 'red', 5000);
-        console.error('Ошибка при копировании: ', err);
-    }
+    copyHtmlContent();
 });
 
 // загрузка html файла
@@ -127,4 +112,36 @@ function changeTextTemporarily(element, newText, color, duration) {
         element.textContent = originalText;
         element.style.color = originalColor;
     }, duration);
+}
+
+async function setHtmlTextToOutputField() {
+    clearTimeout(requestTimer);
+    requestTimer = setTimeout(async () => {
+        const inputText = inputField.value;
+        if (!inputText) {
+            outputField.textContent = "";
+        }
+        else {
+            await processMarkdownText(inputText);
+        }
+    }, 250);
+}
+function copyHtmlContent() {
+    const htmlContent = outputField.innerHTML;
+
+    try {
+        const textarea = document.createElement('textarea');
+        textarea.value = htmlContent;
+
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+
+        changeTextTemporarily(messageField, 'Скопировано', 'green', 5000);
+        console.log('Копирование в буфер обмена успешно!');
+    } catch (err) {
+        changeTextTemporarily(messageField, 'Ошибка при копировании', 'red', 5000);
+        console.error('Ошибка при копировании: ', err);
+    }
 }
