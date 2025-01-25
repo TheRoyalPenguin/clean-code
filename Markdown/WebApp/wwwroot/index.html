@@ -9,8 +9,14 @@
 <body>
     <header>
         <button id="profileBtn">Профиль</button>
+        <div id="profilePopup">
+            <h3>Профиль</h3>
+            <p>Имя пользователя: <span id="username"></span></p>
+            <p>Email: <span id="email"></span></p>
+            <button id="logoutButton">Выйти</button>
+        </div>
     </header>
-    <div class="container">
+    <div class="container" id="mainContainer">
         <div id="inputContainer">
             <textarea class="field" id="inputField" placeholder="Введите markdown текст..." required></textarea>
             <button id="fullscreenInputButton" class="fullscreenButton">⛶</button>

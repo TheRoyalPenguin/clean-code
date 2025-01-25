@@ -12,12 +12,27 @@ public class UsersRepository
         _dbContext = dbContext;
     }
 
-    public async Task<bool> AddAsync(User user)
+    public async Task<Result> AddAsync(User user)
     {
-        await _dbContext.Users.AddAsync(user);
-        await _dbContext.SaveChangesAsync();
+        var existingUser = await _dbContext.Users
+            .AnyAsync(u => u.Email == user.Email);
 
-        return true;
+        if (existingUser)
+        {
+            return Result.Failure("Пользователь с такой почтой уже зарегистрирован");
+        }
+
+        try
+        {
+            await _dbContext.Users.AddAsync(user);
+            await _dbContext.SaveChangesAsync();
+            return Result.Success();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.ToString());
+            return Result.Failure(ex.ToString());
+        }
     }
 
     public async Task<User> GetByEmail(string email)
@@ -25,6 +40,13 @@ public class UsersRepository
         var user = await _dbContext.Users
             .AsNoTracking()
             .FirstOrDefaultAsync(u => u.Email == email);
+
+        return user;
+    }
+    public async Task<User> GetByIdAsync(Guid id)
+    {
+        var user = await _dbContext.Users
+            .FindAsync(id);
 
         return user;
     }

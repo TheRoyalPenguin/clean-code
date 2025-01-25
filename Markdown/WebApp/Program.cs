@@ -1,6 +1,9 @@
+using System.Text;
 using System.Text.Json;
 using Markdown.BaseClasses;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using WebApp.DB;
 using WebApp.DB.Repositories;
 using WebApp.Services;
@@ -20,8 +23,37 @@ public class Program
 
         builder.Services.AddScoped<MyPasswordHasher>();
         builder.Services.AddScoped<UsersRepository>();
-        builder.Services.AddScoped<AuthService>();
+        builder.Services.AddScoped<UserService>();
+        builder.Services.AddScoped<JwtManager>();
 
+        builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(nameof(JwtOptions)));
+        var jwtOptions = builder.Configuration.GetSection(nameof(JwtOptions)).Get<JwtOptions>();
+        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+            {
+                options.TokenValidationParameters = new()
+                {
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(jwtOptions!.SecretKey))
+                };
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var path = context.Request.Path.ToString();
+                        if (!context.Request.Path.StartsWithSegments("/markdown-to-html-convert"))
+                        {
+                            context.Token = context.Request.Cookies["jwt-cookies"];
+                        }
+
+                        return Task.CompletedTask;
+                    }
+                };
+            });
         builder.Services.AddControllers();
 
         var app = builder.Build();
@@ -52,7 +84,7 @@ public class Program
             await context.Response.WriteAsync(JsonSerializer.Serialize(response));
         });
 
-        app.UseRouting(); 
+        app.UseRouting();
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();

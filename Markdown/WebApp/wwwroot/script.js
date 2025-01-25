@@ -1,9 +1,15 @@
 const inputField = document.getElementById('inputField');
 const outputField = document.getElementById('outputField');
 
+const profileUsernameField = document.getElementById('username');
+const profileEmailField = document.getElementById('email');
+
+const profilePopup = document.getElementById('profilePopup');
+
 const inputContainer = document.getElementById('inputContainer');
 const outputContainer = document.getElementById('outputContainer');
 const authContainer = document.getElementById('authContainer');
+const mainContainer = document.getElementById('mainContainer');
 
 const copyHtmlButton = document.getElementById('copyHtmlButton');
 const downloadHtmlButton = document.getElementById('downloadHtmlButton');
@@ -11,6 +17,7 @@ const messageField = document.getElementById('messageField');
 const fullscreenInputButton = document.getElementById('fullscreenInputButton');
 const fullscreenOutputButton = document.getElementById('fullscreenOutputButton');
 const openFullscreenButton = document.getElementById('openFullscreenButton');
+const logoutButton = document.getElementById('logoutButton');
 
 const openProfileButton = document.getElementById('profileBtn');
 const loginForm = document.getElementById('loginForm');
@@ -76,7 +83,7 @@ fullscreenOutputButton.addEventListener('click', () => {
 
 openFullscreenButton.addEventListener('click', () => {
     if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen();
+        mainContainer.requestFullscreen();
         openFullscreenButton.textContent = 'Выйти из полноэкранного режима'
     } else {
         document.exitFullscreen();
@@ -84,10 +91,15 @@ openFullscreenButton.addEventListener('click', () => {
     }
 });
 
-openProfileButton.addEventListener('click', () => {
-    authContainer.style.display = "block";
+openProfileButton.addEventListener('click', async () => {
+    if (await getProfile()) {
+        profilePopup.style.display = 'block';
+        authContainer.style.display = 'none';
+    } else {
+        authContainer.style.display = 'block';
+        profilePopup.style.display = 'none';
+    }
 });
-
 
 loginForm.addEventListener('submit', async (event) => {
     event.preventDefault(); // предотвращает стандартное поведение формы
@@ -98,6 +110,72 @@ registerForm.addEventListener('submit', async (event) => {
     event.preventDefault();
     await register();
 });
+
+logoutButton.addEventListener('click', () => {
+    logout();
+})
+async function register() {
+    const username = document.getElementById('registerUsername').value;
+    const email = document.getElementById('registerEmail').value;
+    const password = document.getElementById('registerPassword').value;
+
+    if (!username || !email || !password) {
+        alert("Все поля должны быть заполнены!");
+        return;
+    }
+
+    try {
+        const response = await fetch('https://localhost:7102/api/auth/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username, email, password }),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Ошибка регистрации");
+        }
+
+        const data = await response.json();
+        alert(data.message);
+    } catch (error) {
+        alert(error.message || "Ошибка регистрации");
+    }
+}
+async function login() {
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+
+    if (!email || !password) {
+        alert("Все поля должны быть заполнены!");
+        return;
+    }
+
+    try {
+        const response = await fetch('https://localhost:7102/api/auth/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email, password }),
+            credentials: 'include', // для работы с куками
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Ошибка входа");
+        }
+
+        const data = await response.json();
+        alert("Вход выполнен успешно!");
+
+        window.location.href = "/";
+    } catch (error) {
+        alert(error.message || "Ошибка входа");
+    }
+}
 
 function showForm(formType) {
     const buttons = document.querySelectorAll('.tabButton');
@@ -191,4 +269,51 @@ function copyHtmlContent() {
 
 function closeAuthContainer() {
     authContainer.style.display = 'none';
+}
+
+async function getProfile() {
+    try {
+        const response = await fetch('https://localhost:7102/api/auth/profile', {
+            method: 'GET',
+            credentials: 'include', // включает куки в запрос
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            profileUsernameField.innerText = data.username;
+            profileEmailField.innerText = data.email;
+            console.log('Авторизован');
+            return true;
+        } else {
+            console.log('Не авторизован');
+            return false;
+        }
+    } catch (error) {
+        console.error('Ошибка проверки авторизации: ', error);
+        return false;
+    }
+
+    return true;
+}
+
+async function logout() {
+    try {
+        const response = await fetch('https://localhost:7102/api/auth/logout', {
+            method: 'POST',
+            credentials: 'include', // включает куки в запрос
+        });
+
+        if (response.ok) {
+            window.location.href = "/";
+            console.log('Успешный выход');
+            return true;
+        } else {
+            console.log('Ошибка при выходе');
+            return false;
+        }
+    } catch (error) {
+        console.error('Ошибка сети: ', error);
+        return false;
+    }
+    
 }

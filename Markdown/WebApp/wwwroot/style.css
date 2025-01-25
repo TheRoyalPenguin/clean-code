@@ -197,3 +197,17 @@ button:active {
 .close:hover {
     background: rgba(255, 255, 255, 0.5);
 }
+
+#profilePopup {
+    display: none;
+    position: absolute;
+    top: 50px;
+    right: 0;
+    z-index: 1000;
+    background-color: #4a4375;
+    text-align: center;
+    padding: 20px;
+    border-radius: 4px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 300px;
+}
