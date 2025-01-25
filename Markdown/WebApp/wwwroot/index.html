@@ -7,23 +7,60 @@
     <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
+    <header>
+        <button id="profileBtn">Профиль</button>
+    </header>
     <div class="container">
         <div id="inputContainer">
-              <textarea class="field" id="inputField" placeholder="Введите markdown текст..." required></textarea>
-              <button id="fullscreenInputButton" class="fullscreenButton">⛶</button>
+            <textarea class="field" id="inputField" placeholder="Введите markdown текст..." required></textarea>
+            <button id="fullscreenInputButton" class="fullscreenButton">⛶</button>
         </div>
         <div id="outputContainer">
             <div class="field" id="outputField"></div>
             <button id="fullscreenOutputButton" class="fullscreenButton">⛶</button>
         </div>
         <div class="fieldButtons">
-            <button class="button" id="copyHtmlButton">Скопировать html</button>
-            <button class="button" id="downloadHtmlButton">Скачать html страницу</button>
-            <button class="button">Что-то...</button>
+            <button id="copyHtmlButton">Скопировать html</button>
+            <button id="downloadHtmlButton">Скачать html страницу</button>
+            <button>Что-то...</button>
             <p id="messageField"></p>
-            <button class="button" id="openFullscreenButton">Полноэкранный режим</button>
+            <button id="openFullscreenButton">Полноэкранный режим</button>
         </div>
-     </div>
-   <script src="script.js"></script>
+    </div>
+    <div class="authContainer" id="authContainer">
+        <span class="close" onclick="closeAuthContainer()">×</span>
+        <h1>Войти или зарегистрироваться</h1>
+        <div class="tabs">
+            <button class="tabButton active" onclick="showForm('login')">Вход</button>
+            <button class="tabButton" onclick="showForm('register')">Регистрация</button>
+        </div>
+        <form id="loginForm" class="form active">
+            <label for="loginEmail">Email:</label>
+            <input type="email" id="loginEmail" placeholder="Введите email" required>
+
+            <label for="loginPassword">Пароль:</label>
+            <input type="password" id="loginPassword" placeholder="Введите пароль" required>
+
+            <button type="submit">Войти</button>
+        </form>
+        <form id="registerForm" class="form">
+            <label for="registerEmail">Email:</label>
+            <input type="email" id="registerEmail" placeholder="Введите email" required>
+
+            <label for="registerUsername">Username:</label>
+            <input type="text" id="registerUsername" placeholder="Придумайте никнейм" required>
+            <small id="nameError" class="errorAuthMessage"></small>
+
+            <label for="registerPassword">Пароль:</label>
+            <input type="password" id="registerPassword" placeholder="Введите пароль" required>
+
+            <label for="confirmPassword">Подтвердите пароль:</label>
+            <input type="password" id="confirmPassword" placeholder="Повторите пароль" required>
+
+            <button type="submit">Зарегистрироваться</button>
+        </form>
+        <p id="errorAuthMessage" class="errorAuthMessage"></p>
+    </div>
+    <script src="script.js"></script>
 </body>
 </html>

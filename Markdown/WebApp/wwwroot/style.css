@@ -2,8 +2,8 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    color: #fff;
     font-family: Arial, sans-serif;
+    color: #eee5e5;
 }
 body {
     background-color: #2d2a4a;
@@ -11,6 +11,20 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
+}
+
+header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 0 10px;
+    background-color: #3c375e;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    min-height: 40px;
+    z-index: 1000;
 }
 
 .container {
@@ -54,7 +68,7 @@ body {
     margin-top: auto;
 }
 
-.button {
+button {
     padding: 10px;
     margin: 3px 0;
     border: 2px solid #514b82;
@@ -65,12 +79,12 @@ body {
     transition: background-color 0.3s;
 }
 
-.button:hover {
+button:hover {
     background-color: #514b82;
     border-color: #3c375e;
 }
 
-.button:active {
+button:active {
     background-color: #2a2645;
 }
 
@@ -87,7 +101,7 @@ body {
 .fullscreenButton {
     position: absolute;
     bottom: 5px;
-    right: 5px;
+    right: 7px;
     background: rgba(255, 255, 255, 0.25);
     border: 0;
     border-radius: 3px;
@@ -109,4 +123,77 @@ body {
     margin: 0 !important;
     z-index: 1000;
     resize: none;
+}
+
+.authContainer {
+    position: absolute;
+    background-color: #4a4375;
+    text-align: center;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 350px;
+    display: none;
+}
+
+.authContainer input, .authContainer button {
+    width: 100%;
+    margin: 10px 0;
+    padding: 10px;
+}
+
+.authContainer input {
+    color: black;
+}
+
+.authContainer input:focus {
+    border-color: #7c3aed;
+    outline: none;
+}
+
+.errorAuthMessage {
+    color: red;
+    font-size: 14px;
+}
+
+.tabs {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+
+.tabButton {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 10px;
+    font-weight: bold;
+}
+
+.tabButton.active {
+    border-bottom: 2px solid #7c3aed;
+}
+
+.form {
+    display: none;
+}
+
+.form.active {
+    display: block;
+}
+
+.close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(255, 255, 255, 0.25);
+    border: 0;
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 2px 5px;
+}
+
+.close:hover {
+    background: rgba(255, 255, 255, 0.5);
 }

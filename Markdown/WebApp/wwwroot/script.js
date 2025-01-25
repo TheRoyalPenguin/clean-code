@@ -3,6 +3,7 @@ const outputField = document.getElementById('outputField');
 
 const inputContainer = document.getElementById('inputContainer');
 const outputContainer = document.getElementById('outputContainer');
+const authContainer = document.getElementById('authContainer');
 
 const copyHtmlButton = document.getElementById('copyHtmlButton');
 const downloadHtmlButton = document.getElementById('downloadHtmlButton');
@@ -10,6 +11,11 @@ const messageField = document.getElementById('messageField');
 const fullscreenInputButton = document.getElementById('fullscreenInputButton');
 const fullscreenOutputButton = document.getElementById('fullscreenOutputButton');
 const openFullscreenButton = document.getElementById('openFullscreenButton');
+
+const openProfileButton = document.getElementById('profileBtn');
+const loginForm = document.getElementById('loginForm');
+const registerForm = document.getElementById('registerForm');
+const errorAuthMessage = document.getElementById('errorAuthMessage');
 
 let requestTimer;
 
@@ -22,13 +28,10 @@ inputField.addEventListener("input", async () => {
 
 // копирование html кода
 copyHtmlButton.addEventListener('click', () => {
-    copyHtmlContent();
-});
-
-// перехватываем событие копирования
-outputField.addEventListener('copy', (event) => {
-    event.preventDefault(); // отмена стандартного копирования
-
+    copyHtmlButton.disabled = true;
+    setTimeout(() => {
+        copyHtmlButton.disabled = false;
+    }, 5000);
     copyHtmlContent();
 });
 
@@ -81,6 +84,39 @@ openFullscreenButton.addEventListener('click', () => {
     }
 });
 
+openProfileButton.addEventListener('click', () => {
+    authContainer.style.display = "block";
+});
+
+
+loginForm.addEventListener('submit', async (event) => {
+    event.preventDefault(); // предотвращает стандартное поведение формы
+    await login();
+});
+
+registerForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    await register();
+});
+
+function showForm(formType) {
+    const buttons = document.querySelectorAll('.tabButton');
+
+    if (errorAuthMessage) errorAuthMessage.textContent = '';
+
+    if (formType === 'login') {
+        loginForm.classList.add('active');
+        registerForm.classList.remove('active');
+        buttons[0].classList.add('active');
+        buttons[1].classList.remove('active');
+    } else if (formType === 'register') {
+        registerForm.classList.add('active');
+        loginForm.classList.remove('active');
+        buttons[1].classList.add('active');
+        buttons[0].classList.remove('active');
+    }
+}
+
 async function processMarkdownText(inputText) {
     try {
         const response = await fetch("/markdown-to-html-convert", {
@@ -128,20 +164,31 @@ async function setHtmlTextToOutputField() {
 }
 function copyHtmlContent() {
     const htmlContent = outputField.innerHTML;
+    htmlContent
+    if (htmlContent) {
+        try {
+            const textarea = document.createElement('textarea');
+            textarea.value = htmlContent;
+            textarea.setAttribute('readonly', '');
+            textarea.style.position = 'absolute';
+            textarea.style.left = '-9999px'
 
-    try {
-        const textarea = document.createElement('textarea');
-        textarea.value = htmlContent;
+            document.body.appendChild(textarea);
+            textarea.select();
 
-        document.body.appendChild(textarea);
-        textarea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textarea);
-
-        changeTextTemporarily(messageField, 'Скопировано', 'green', 5000);
-        console.log('Копирование в буфер обмена успешно!');
-    } catch (err) {
-        changeTextTemporarily(messageField, 'Ошибка при копировании', 'red', 5000);
-        console.error('Ошибка при копировании: ', err);
+            const isCopied = document.execCommand('copy');
+            if (isCopied) {
+                changeTextTemporarily(messageField, 'Скопировано', 'green', 5000);
+                console.log('Копирование в буфер обмена успешно!');
+            }
+            document.body.removeChild(textarea);
+        } catch (err) {
+            changeTextTemporarily(messageField, 'Ошибка при копировании', 'red', 5000);
+            console.error('Ошибка при копировании: ', err);
+        }
     }
+}
+
+function closeAuthContainer() {
+    authContainer.style.display = 'none';
 }
