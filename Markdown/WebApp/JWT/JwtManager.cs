@@ -27,7 +27,7 @@ public class JwtManager
         var token = new JwtSecurityToken(
             claims: claims,
             signingCredentials: signingCredentials,
-            expires: DateTime.UtcNow.AddHours(_options.ExpiresHours)
+            expires: DateTime.UtcNow.AddHours(_options.ExpiryMinutes)
             );
 
         var tokenHandler = new JwtSecurityTokenHandler().WriteToken(token);

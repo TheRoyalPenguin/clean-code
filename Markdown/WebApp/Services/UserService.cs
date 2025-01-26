@@ -31,7 +31,7 @@ public class UserService
 
     public async Task<User> LoginAsync(string email, string password)
     {
-        var user = await _usersRepository.GetByEmail(email);
+        var user = await _usersRepository.GetByEmailAsync(email);
 
         if (user == null)
         {
