@@ -1,4 +1,6 @@
-﻿namespace WebApp.DB.Models;
+﻿using WebApp.DB.Enums;
+
+namespace WebApp.DB.Models;
 
 public class DocumentPermission
 {

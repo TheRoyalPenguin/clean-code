@@ -23,7 +23,7 @@ public class UserService
 
         if (!resultAddUser.IsSuccess)
         {
-            return Result.Failure(resultAddUser.Error);
+            return Result.Failure(resultAddUser.ErrorMessage);
         }
 
         return Result.Success();

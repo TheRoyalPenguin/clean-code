@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using WebApp.DB;
 using WebApp.DB.DTO;
 using WebApp.DB.Repositories;
+using WebApp.Interfaces;
 using WebApp.JWT;
 using WebApp.Services;
 
@@ -25,8 +26,11 @@ public class Program
 
         builder.Services.AddScoped<MyPasswordHasher>();
         builder.Services.AddScoped<UsersRepository>();
+        builder.Services.AddScoped<DocumentsRepository>();
         builder.Services.AddScoped<UserService>();
         builder.Services.AddScoped<JwtManager>();
+        builder.Services.AddScoped<DocumentsService>();
+        builder.Services.AddScoped<IFileStorageService, MinioStorageService>();
 
         builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(nameof(JwtOptions)));
         var jwtOptions = builder.Configuration.GetSection(nameof(JwtOptions)).Get<JwtOptions>();
@@ -39,8 +43,7 @@ public class Program
                     ValidateAudience = false,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(jwtOptions!.SecretKey))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions!.SecretKey))
                 };
                 options.Events = new JwtBearerEvents
                 {
@@ -57,7 +60,6 @@ public class Program
                 };
             });
         builder.Services.AddControllers();
-
         var app = builder.Build();
 
         app.UseDefaultFiles();

@@ -10,6 +10,7 @@ const inputContainer = document.getElementById('inputContainer');
 const outputContainer = document.getElementById('outputContainer');
 const authContainer = document.getElementById('authContainer');
 const mainContainer = document.getElementById('mainContainer');
+const documentGrid = document.getElementById('documentGrid');
 
 const copyHtmlButton = document.getElementById('copyHtmlButton');
 const downloadHtmlButton = document.getElementById('downloadHtmlButton');
@@ -18,6 +19,7 @@ const fullscreenInputButton = document.getElementById('fullscreenInputButton');
 const fullscreenOutputButton = document.getElementById('fullscreenOutputButton');
 const openFullscreenButton = document.getElementById('openFullscreenButton');
 const logoutButton = document.getElementById('logoutButton');
+const saveInputButton = document.getElementById('saveInputButton');
 
 const openProfileButton = document.getElementById('profileBtn');
 const loginForm = document.getElementById('loginForm');
@@ -114,6 +116,38 @@ registerForm.addEventListener('submit', async (event) => {
 logoutButton.addEventListener('click', () => {
     logout();
 })
+
+myDocumentsButton.addEventListener('click', async () => {
+    profilePopup.style.display = 'none';
+    await getDocuments();
+})
+
+saveInputButton.addEventListener('click', async () => {
+    const inputText = inputField.value;
+    const file = new File([inputText], "document.txt", { type: "text/plain" });
+
+    const formData = new FormData();
+    formData.append("Title", inputText.substring(0, 10));
+    formData.append("File", file);
+
+    try {
+        const response = await fetch("https://localhost:7102/api/documents/save", {
+            method: 'POST',
+            body: formData,
+            credentials: 'include',
+        });
+
+        const result = await response.json();
+        if(response.ok) {
+            alert('Успешно сохранено!');
+        } else {
+            console.log('Ошибка сохранения.');
+        }
+    } catch {
+        console.error(error);
+    }
+})
+
 async function register() {
     const username = document.getElementById('registerUsername').value;
     const email = document.getElementById('registerEmail').value;
@@ -316,4 +350,44 @@ async function logout() {
         return false;
     }
     
+}
+
+async function getDocuments() {
+    try {
+        const response = await fetch(`https://localhost:7102/api/documents/myDocuments`);
+        if (!response.ok) {
+            throw new Error("Ошибка загрузки документов");
+        }
+
+        const documents = await response.json();
+        renderDocuments(documents);
+    } catch (error) {
+        console.error("Ошибка:", error.message);
+    }
+}
+
+function renderDocuments(documents) {
+    mainContainer.style.display = 'none';
+    documentGrid.innerHTML = "";
+
+    documents.forEach((doc) => {
+        const card = document.createElement("div");
+        card.className = "card";
+
+        const title = document.createElement("div");
+        title.className = "cardTitle";
+        title.textContent = doc.title;
+
+        const dates = document.createElement("div");
+        dates.className = "cardDates";
+        dates.innerHTML = `
+            <div>Создано: ${new Date(doc.createdAt).toLocaleDateString()}</div>
+            <div>Изменено: ${new Date(doc.lastModifiedAt).toLocaleDateString()}</div>
+        `;
+
+        card.appendChild(title);
+        card.appendChild(dates);
+
+        documentGrid.appendChild(card);
+    });
 }

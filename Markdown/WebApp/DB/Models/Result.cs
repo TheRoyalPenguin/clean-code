@@ -1,31 +1,37 @@
-﻿namespace WebApp.DB.Models;
+﻿using WebApp.DB.Enums;
+
+namespace WebApp.DB.Models;
 
 public class Result
 {
     public bool IsSuccess { get; }
-    public string Error { get; }
+    public string ErrorMessage { get; }
+    public Errors Error { get; }
 
-    protected Result(bool isSuccess, string error)
+    protected Result(bool isSuccess, string errorMessage, Errors error)
     {
         IsSuccess = isSuccess;
+        ErrorMessage = errorMessage;
         Error = error;
     }
 
-    public static Result Success() => new Result(true, null);
-    public static Result Failure(string error) => new Result(false, error);
+    public static Result Success() => new Result(true, null, Errors.NotError);
+    public static Result Failure(string errorMessage, Errors error = Errors.Unknown) => new Result(false, errorMessage, error);
 }
 
 public class Result<T>
 {
     public bool IsSuccess { get; }
-    public string Error { get; }
+    public string ErrorMessage { get; }
+    public Errors Error { get; }
     public T Value { get; }
-    protected Result(bool isSuccess, string error, T value)
+    protected Result(bool isSuccess, string errorMessage, Errors error, T value)
     {
         IsSuccess = isSuccess;
+        ErrorMessage = errorMessage;
         Error = error;
         Value = value;
     }
-    public static Result<T> Success(T value) => new Result<T>(true, null, value);
-    public static Result<T> Failure(string error) => new Result<T>(false, error, default);
+    public static Result<T> Success(T value) => new Result<T>(true, null, Errors.NotError, value);
+    public static Result<T> Failure(string errorMessage, Errors error = Errors.Unknown) => new Result<T>(false, errorMessage, error, default);
 }

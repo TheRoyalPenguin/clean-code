@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using WebApp.DB.Enums;
 using WebApp.DB.Models;
 
 namespace WebApp.DB.Repositories;
@@ -26,7 +27,7 @@ public class DocumentsRepository
 
         return Result.Success();
     }
-    public async Task<Document> GetDocumentByIdAsync(Guid id)
+    public async Task<Document> GetDocumentByIdAsync(Guid? id)
     {
         var document = await _dbContext.Documents
             .Include(d => d.Permissions)
@@ -87,7 +88,7 @@ public class DocumentsRepository
         }
         return Result.Failure("Ошибка при проверке прав доступа");
     }
-    public async Task<Result> CheckWriteAccessAsync(Guid documentId, Guid userId)
+    public async Task<Result> CheckWriteAccessAsync(Guid? documentId, Guid userId)
     {
         var document = await GetDocumentByIdAsync(documentId);
 

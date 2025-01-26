@@ -13,6 +13,7 @@
             <h3>Профиль</h3>
             <p>Имя пользователя: <span id="username"></span></p>
             <p>Email: <span id="email"></span></p>
+            <button id="myDocumentsButton">Мои документы</button>
             <button id="logoutButton">Выйти</button>
         </div>
     </header>
@@ -28,11 +29,12 @@
         <div class="fieldButtons">
             <button id="copyHtmlButton">Скопировать html</button>
             <button id="downloadHtmlButton">Скачать html страницу</button>
-            <button>Что-то...</button>
+            <button id="saveInputButton">Сохранить</button>
             <p id="messageField"></p>
             <button id="openFullscreenButton">Полноэкранный режим</button>
         </div>
     </div>
+    <div class="gridContainer" id="documentGrid"></div>
     <div class="authContainer" id="authContainer">
         <span class="close" onclick="closeAuthContainer()">×</span>
         <h1>Войти или зарегистрироваться</h1>

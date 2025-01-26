@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using WebApp.DB.Enums;
 
 namespace WebApp.DB.DTO;
 

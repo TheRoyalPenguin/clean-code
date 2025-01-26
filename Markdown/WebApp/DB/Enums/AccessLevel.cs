@@ -1,4 +1,4 @@
-﻿namespace WebApp.DB;
+﻿namespace WebApp.DB.Enums;
 
 public enum AccessLevel
 {
