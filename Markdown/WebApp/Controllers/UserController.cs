@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApp.DB.DTO;
+using WebApp.JWT;
 using WebApp.Services;
 
-namespace WebApp;
+namespace WebApp.Controllers;
 
 [ApiController]
 [Route("api/auth")]

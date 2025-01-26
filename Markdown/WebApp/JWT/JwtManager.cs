@@ -5,14 +5,14 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.Extensions.Options;
 
-namespace WebApp;
+namespace WebApp.JWT;
 
 public class JwtManager
 {
     private readonly JwtOptions _options;
     public JwtManager(IOptions<JwtOptions> options)
     {
-        _options = options.Value; 
+        _options = options.Value;
     }
     public string Generate(User user)
     {

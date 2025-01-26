@@ -5,7 +5,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using WebApp.DB;
+using WebApp.DB.DTO;
 using WebApp.DB.Repositories;
+using WebApp.JWT;
 using WebApp.Services;
 
 namespace WebApp;

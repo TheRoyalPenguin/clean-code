@@ -22,17 +22,10 @@ public class UsersRepository
             return Result.Failure("Пользователь с такой почтой уже зарегистрирован");
         }
 
-        try
-        {
-            await _dbContext.Users.AddAsync(user);
-            await _dbContext.SaveChangesAsync();
-            return Result.Success();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.ToString());
-            return Result.Failure(ex.ToString());
-        }
+
+        await _dbContext.Users.AddAsync(user);
+        await _dbContext.SaveChangesAsync();
+        return Result.Success();
     }
 
     public async Task<User> GetByEmail(string email)

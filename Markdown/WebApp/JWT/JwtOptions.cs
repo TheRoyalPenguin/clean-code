@@ -1,4 +1,4 @@
-﻿namespace WebApp;
+﻿namespace WebApp.JWT;
 
 public class JwtOptions
 {

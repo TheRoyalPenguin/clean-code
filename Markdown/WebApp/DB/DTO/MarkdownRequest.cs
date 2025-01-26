@@ -1,4 +1,4 @@
-﻿namespace WebApp;
+﻿namespace WebApp.DB.DTO;
 
 public class MarkdownRequest
 {

@@ -1,5 +1,6 @@
 ﻿using WebApp.DB.Models;
 using WebApp.DB.Repositories;
+using WebApp.JWT;
 
 namespace WebApp.Services;
 
