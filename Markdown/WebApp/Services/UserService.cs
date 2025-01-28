@@ -61,4 +61,16 @@ public class UserService
 
         return user;
     }
+    public async Task<User> GetUserByEmailAsync(string email)
+    {
+        var user = await _usersRepository.GetByEmailAsync(email);
+
+        if (user == null)
+        {
+            Console.WriteLine("Пользователь не найден");
+            return null;
+        }
+
+        return user;
+    }
 }

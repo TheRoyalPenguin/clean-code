@@ -21,10 +21,28 @@ public class Tokenizer
         allowedTags = isEscapingSupported ? new HashSet<string> { "_", "__", "#", "<", ">", "\\" } : new HashSet<string> { "_", "__", "#", "<", ">" };
 
         string[] markdownTextParagraphs = markdownText.Split("\n");
-        foreach (var markdownTextParagraph in markdownTextParagraphs)
+        foreach (var markdownTextParagraphF in markdownTextParagraphs)
         {
+            var markdownTextParagraph = markdownTextParagraphF;
             var pointerToCurrentTokenStack = new Stack<BaseMarkdownToken>();
             // string[] wordsMarkdownTextParagraph = markdownTextParagraph.Split(" ", StringSplitOptions.RemoveEmptyEntries);
+
+            if (markdownTextParagraph != null && markdownTextParagraph.Length != 0 && markdownTextParagraph.TrimStart().StartsWith("#"))
+            {
+                int headerLevel = markdownTextParagraph.TrimStart().TakeWhile(p => p == '#').Count();
+                headerLevel = Math.Min(headerLevel, 6);
+
+                rootToken = new HeaderToken(headerLevel);
+                pointerToCurrentTokenStack.Push(rootToken);
+                markdownTextParagraph = RemoveFirstNChars(markdownTextParagraph, '#', headerLevel);
+            }
+            else
+            {
+                rootToken = new ParagraphToken();
+                pointerToCurrentTokenStack.Push(rootToken);
+            }
+
+            mainToken.Children.Add(rootToken);
 
             string pattern = @"(\s+|\S+)";
             // \s+ один или более пробелов
@@ -34,20 +52,6 @@ public class Tokenizer
                 .Cast<Match>() // преобразуем MatchCollection в IEnumerable<Match>
                 .Select(m => m.Value)
                 .ToArray();
-
-            if (markdownTextParagraph != null && markdownTextParagraph.Length != 0 && markdownTextParagraph.TrimStart()[0] == '#')
-            {
-                rootToken = new HeaderToken();
-                pointerToCurrentTokenStack.Push(rootToken);
-                wordsMarkdownTextParagraph[0] = wordsMarkdownTextParagraph[0].Substring(1);
-            }
-            else
-            {
-                rootToken = new ParagraphToken();
-                pointerToCurrentTokenStack.Push(rootToken);
-            }
-
-            mainToken.Children.Add(rootToken);
 
             //не нужно, теперь строки целиком обрабатываются
             //foreach (var word in wordsMarkdownTextParagraph)
@@ -289,5 +293,23 @@ public class Tokenizer
             stack.Push(extractedElementsOfStack[j]);
         }
         return default;
+    }
+    private string RemoveFirstNChars(string s, char c, int n)
+    {
+        string result = "";
+        int searchCount = 0;
+        for (int i = 0; i < s.Length; i++)
+        {
+            if (s[i] == c && searchCount < n)
+            {
+                searchCount++;
+            }
+            else
+            {
+                result += s[i];
+            }
+        }
+
+        return result;
     }
 }

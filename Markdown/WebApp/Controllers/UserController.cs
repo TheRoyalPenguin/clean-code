@@ -85,7 +85,7 @@ public class UserController : ControllerBase
             HttpOnly = true,
             Secure = true,
             SameSite = SameSiteMode.Strict,
-            Expires = DateTime.UtcNow.AddMinutes(30)
+            Expires = DateTime.UtcNow.AddDays(-1)
         });
 
         return Ok(new { message = "Успешный выход" });

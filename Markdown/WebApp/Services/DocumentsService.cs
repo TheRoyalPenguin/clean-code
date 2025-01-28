@@ -18,7 +18,7 @@ public class DocumentsService
         _fileStorageService = fileStorageService;
     }
 
-    public async Task<Result<Document>> CreateDocumentAsync(DocumentRequest documentRequest, Guid userId)
+    public async Task<Result<DocumentDto>> CreateDocumentAsync(DocumentRequest documentRequest, Guid userId)
     {
         using var fileStream = documentRequest.File.OpenReadStream();
         var objectName = await _fileStorageService.UploadFileAsync(
@@ -35,29 +35,40 @@ public class DocumentsService
             FileSize = documentRequest.File.Length,
             StorageObjectId = objectName,
             OwnerId = userId,
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = DateTime.UtcNow,
+            LastModifiedAt = DateTime.UtcNow
         };
 
         var isAdded = await _documentsRepository.AddDocumentAsync(document);
         if (isAdded.IsSuccess)
         {
-            return Result<Document>.Success(document);
+            var documentDto = new DocumentDto // чтобы не было цикличности
+            {
+                Id = document.Id,
+                Title = document.Title,
+                Name = document.Name,
+                ContentType = document.ContentType,
+                FileSize = document.FileSize,
+                LastModifiedAt = document.LastModifiedAt
+            };
+
+            return Result<DocumentDto>.Success(documentDto);
         }
 
-        return Result<Document>.Failure("Не удалось создать документ.");
+        return Result<DocumentDto>.Failure("Не удалось создать документ.");
     }
-    public async Task<Result<Document>> UpdateDocumentAsync(DocumentRequest documentRequest, Guid userId)
+    public async Task<Result<DocumentDto>> UpdateDocumentAsync(DocumentRequest documentRequest, Guid userId)
     {
         var document = await _documentsRepository.GetDocumentByIdAsync(documentRequest.Id);
         if (document == null)
         {
-            return Result<Document>.Failure($"Документ {documentRequest.Id} не найден.");
+            return Result<DocumentDto>.Failure($"Документ {documentRequest.Id} не найден.");
         }
 
         var writeAccessCheckedResult = await _documentsRepository.CheckWriteAccessAsync(documentRequest.Id, userId);
         if (!writeAccessCheckedResult.IsSuccess)
         {
-            return Result<Document>.Failure("Нет доступа к изменениям.");
+            return Result<DocumentDto>.Failure("Нет доступа к изменениям.");
         }
 
         await _fileStorageService.DeleteFileAsync(document.StorageObjectId);
@@ -77,14 +88,25 @@ public class DocumentsService
         document.LastModifiedAt = DateTime.UtcNow;
 
         await _documentsRepository.UpdateDocumentAsync(document);
-        return Result<Document>.Success(document);
+
+        var documentDto = new DocumentDto // чтобы не было цикличности
+        {
+            Id = document.Id,
+            Title = document.Title,
+            Name = document.Name,
+            ContentType = document.ContentType,
+            FileSize = document.FileSize,
+            LastModifiedAt = document.LastModifiedAt
+        };
+
+        return Result<DocumentDto>.Success(documentDto);
     }
-    public async Task<Result> DeleteDocumentAsync(Guid userId, Guid documentid)
+    public async Task<Result> DeleteDocumentAsync(Guid documentid, Guid userId)
     {
         var document = await _documentsRepository.GetDocumentByIdAsync(documentid);
         if (document == null)
         {
-            return Result.Failure("Документ не найден.");
+            return Result.Failure("Документ не найден.", Errors.NotFound);
         }
         if (document.OwnerId != userId)
         {
@@ -105,6 +127,18 @@ public class DocumentsService
         }
 
         return Result<Document>.Success(document);
+    }
+    public async Task<Result<List<User>>> GetUsersWithReadPermissionAsync(Guid documentId)
+    {
+        var users = await _documentsRepository.GetUsersWithReadPermissionAsync(documentId);
+        
+        return Result<List<User>>.Success(users);
+    }
+    public async Task<Result<List<User>>> GetUsersWithWritePermissionAsync(Guid documentId)
+    {
+        var users = await _documentsRepository.GetUsersWithWritePermissionAsync(documentId);
+        
+        return Result<List<User>>.Success(users);
     }
     public async Task<Result<Stream>> GetDocumentContentAsync(Guid documentId, Guid userId)
     {
@@ -138,6 +172,17 @@ public class DocumentsService
 
         return Result<List<Document>>.Failure("Документы не найдены.");
     }
+    public async Task<Result<List<Document>>> GetAvailableDocumentsToUserAsync(Guid userId)
+    {
+        var documents = await _documentsRepository.GetAvailableDocumentsToUserAsync(userId);
+
+        if (documents != null && documents.Any())
+        {
+            return Result<List<Document>>.Success(documents);
+        }
+
+        return Result<List<Document>>.Failure("Документы не найдены.");
+    }
     public async Task<Result> AddPermissionAsync(Guid documentId, Guid userId, Permission permission)
     {
         var document = await _documentsRepository.GetDocumentByIdAsync(documentId);
@@ -155,12 +200,15 @@ public class DocumentsService
         {
             return Result.Failure("Пользователь с указанным email не найден.");
         }
-
-        var existingPermission = await _documentsRepository.CheckReadAccessAsync(documentId, user.Id);
-        if (existingPermission != null)
+        if (userId == user.Id)
         {
-            return Result.Failure("Права доступа для этого пользователя уже выданы.");
+            return Result.Failure("Владелец и так владеет всеми правами.");
         }
+        //var existingPermission = await _documentsRepository.CheckReadAccessAsync(documentId, user.Id);
+        //if (existingPermission.IsSuccess)
+        //{
+        //    return Result.Failure("Права доступа для этого пользователя уже выданы.");
+        //}
 
         var documentPermission = new DocumentPermission
         {

@@ -5,6 +5,7 @@
     font-family: Arial, sans-serif;
     color: #eee5e5;
 }
+
 body {
     background-color: #2d2a4a;
     display: flex;
@@ -28,6 +29,7 @@ header {
 }
 
 .container {
+    background-color: #2d2a4a;
     display: flex;
     gap: 20px;
     width: 90%;
@@ -50,6 +52,9 @@ header {
 
 .field:focus {
     border-color: #7769b7;
+}
+#messageField {
+    text-align: center;
 }
 
 #outputField {
@@ -221,6 +226,7 @@ button:active {
 }
 
 .card {
+    position: relative;
     flex: 1 1 250px;
     border: 1px solid #ddd;
     border-radius: 8px;
@@ -228,6 +234,7 @@ button:active {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s, box-shadow 0.2s;
     margin: 10px;
+    cursor: pointer;
 }
 
 .card:hover {
@@ -242,4 +249,82 @@ button:active {
 
 .cardDates {
     margin-top: 8px;
+}
+
+.cardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.deleteButton {
+    background-color: #514b82;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.deleteButton:hover {
+    background-color: #db2424;
+}
+
+#permissionForm {
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+/* форма предоставления доступа к документу*/
+#permissionForm {
+    background-color: #2d2a4a;
+    border: 2px solid #514b82;
+}
+
+#permissionForm div {
+    margin-bottom: 15px;
+}
+
+#permissionForm label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    text-align: center;
+}
+
+#permissionForm input,
+#permissionForm select {
+    width: 100%;
+    padding: 8px;
+    border: 2px solid #514b82;
+    border-radius: 4px;
+    background-color: #2d2a4a;
+    outline: none;
+}
+
+#permissionForm button {
+    width: 100%;
+    padding: 10px;
+    cursor: pointer;
+}
+
+#shareDocumentSettingsContainer {
+    display: none;
+    position: absolute;
+    z-index: 1000;
+    background-color: #4a4375e4;
+    text-align: center;
+    padding: 20px;
+    border-radius: 4px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 80%;
 }

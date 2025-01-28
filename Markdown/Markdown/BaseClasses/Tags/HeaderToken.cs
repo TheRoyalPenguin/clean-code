@@ -4,16 +4,16 @@ namespace Markdown.Tags;
 
 public class HeaderToken : BaseMarkdownToken
 {
-    //public string Content { get; }
-    //public HeaderToken(string content)
-    //{
-    //    Content = content;
-    //}
+    private int Level { get; }
+    public HeaderToken(int level)
+    {
+        Level = level;
+    }
     public override TokenNamesEnum TokenName { get; } = TokenNamesEnum.Header;
     public override string ToHtml()
     {
         // ƒополнительно раздел€ем пробелами "слова"
         var htmlResultString = string.Join("", Children.Select((child, i) => i != 0 ? " " + child.ToHtml() : child.ToHtml()));
-        return ("<h1>" + htmlResultString + "</h1>");
+        return ($"<h{Level}>" + htmlResultString + $"</h{Level}>");
     }
 }

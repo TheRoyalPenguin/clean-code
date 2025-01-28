@@ -30,11 +30,48 @@
             <button id="copyHtmlButton">Скопировать html</button>
             <button id="downloadHtmlButton">Скачать html страницу</button>
             <button id="saveInputButton">Сохранить</button>
+            <button id="shareDocumentSettingsButton">Настройка доступа</button>
+
+            <div id="permissionForm">
+                <form id="accessForm">
+                    <div>
+                        <label for="email">Email пользователя:</label>
+                        <input type="email" id="accessFormEmail" name="email" required placeholder="Введите email">
+                    </div>
+                    <div>
+                        <label for="permission">Уровень доступа:</label>
+                        <select id="permission" name="permission" required>
+                            <option value="Read">Чтение</option>
+                            <option value="Write">Запись</option>
+                        </select>
+                    </div>
+                    <button type="submit">Предоставить доступ</button>
+                </form>
+            </div>
+
             <p id="messageField"></p>
             <button id="openFullscreenButton">Полноэкранный режим</button>
         </div>
+        <div id="shareDocumentSettingsContainer">
+            <span class="close" onclick="closeShareDocumentSettingsContainer()">×</span>
+            <div>
+                <h2 id="readAccessTitle">Пользователи с доступом для чтения</h2>
+                <div id="readAccessUsers" class="gridContainer"></div>
+            </div>
+
+            <div>
+                <h2 id="writeAccessTitle">Пользователи с доступом для редактирования</h2>
+                <div id="writeAccessUsers" class="gridContainer"></div>
+            </div>
+            <p id="messageField"></p>
+        </div>
     </div>
-    <div class="gridContainer" id="documentGrid"></div>
+    <div id="documentGrid">
+        <h2 id="myDocumentGridTitle"></h2>
+        <div class="gridContainer" id="myDocumentGrid"></div>
+        <h2 id="availableDocumentGridTitle"></h2>
+        <div class="gridContainer" id="availableDocumentGrid"></div>
+    </div>
     <div class="authContainer" id="authContainer">
         <span class="close" onclick="closeAuthContainer()">×</span>
         <h1>Войти или зарегистрироваться</h1>

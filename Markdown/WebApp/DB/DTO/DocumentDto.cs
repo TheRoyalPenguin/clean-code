@@ -1,6 +1,6 @@
-﻿namespace WebApp.DB.Models;
+﻿namespace WebApp.DB.DTO;
 
-public class Document
+public class DocumentDto
 {
     public Guid Id { get; set; }
     public string Title { get; set; }
@@ -10,10 +10,4 @@ public class Document
     public string StorageObjectId { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime LastModifiedAt { get; set; }
-
-
-    public Guid OwnerId { get; set; }
-    public User Owner { get; set; }
-
-    public List<DocumentPermission> Permissions { get; set; }
 }

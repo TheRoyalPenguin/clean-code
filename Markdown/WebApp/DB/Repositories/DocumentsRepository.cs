@@ -31,17 +31,44 @@ public class DocumentsRepository
     {
         var document = await _dbContext.Documents
             .Include(d => d.Permissions)
-            .FirstOrDefaultAsync(d => d.id == id);
+            .FirstOrDefaultAsync(d => d.Id == id);
 
         return document;
     }
     public async Task<List<Document>> GetDocumentsByUserAsync(Guid userId)
     {
         var documents = await _dbContext.Documents
-            .Where(d => d.OwnerId == userId || d.Permissions.Any(p => p.UserId == userId))
+            .Where(d => d.OwnerId == userId)
             .ToListAsync();
 
         return documents;
+    }
+    public async Task<List<Document>> GetAvailableDocumentsToUserAsync(Guid userId)
+    {
+        var documents = await _dbContext.DocumentPermissions
+            .Where(dp => dp.UserId == userId)
+            .Select(dp => dp.Document)
+            .ToListAsync();
+
+        return documents;
+    }
+    public async Task<List<User>> GetUsersWithReadPermissionAsync(Guid documentId)
+    {
+        var usersWitReadhPermission = await _dbContext.DocumentPermissions
+            .Where(dp => dp.DocumentId == documentId && dp.AccessLevel == AccessLevel.Read)
+            .Select(dp => dp.User)
+            .ToListAsync();
+
+        return usersWitReadhPermission;
+    }
+    public async Task<List<User>> GetUsersWithWritePermissionAsync(Guid documentId)
+    {
+        var usersWitReadhPermission = await _dbContext.DocumentPermissions
+            .Where(dp => dp.DocumentId == documentId && dp.AccessLevel == AccessLevel.Write)
+            .Select(dp => dp.User)
+            .ToListAsync();
+
+        return usersWitReadhPermission;
     }
     public async Task<Result> DeleteDocumentAsync(Guid id)
     {
@@ -58,7 +85,18 @@ public class DocumentsRepository
     }
     public async Task<Result> AddPermissionAsync(DocumentPermission permission)
     {
-        _dbContext.DocumentPermissions.Add(permission);
+        var existingPermission = await _dbContext.DocumentPermissions
+            .FirstOrDefaultAsync(dp => dp.DocumentId == permission.DocumentId && dp.UserId == permission.UserId);
+
+        if (existingPermission != null)
+        {
+            existingPermission.AccessLevel = permission.AccessLevel;
+        }
+        else
+        {
+            _dbContext.DocumentPermissions.Add(permission);
+        }
+
         await _dbContext.SaveChangesAsync();
 
         return Result.Success();
