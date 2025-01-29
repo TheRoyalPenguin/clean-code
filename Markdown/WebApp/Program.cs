@@ -18,10 +18,14 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+        
+        // РїРѕРґРєР»СЋС‡РµРЅРёРµ РєРѕРЅС„РёРіСѓСЂР°С†РёРё
+        builder.Configuration.AddEnvironmentVariables();
+        var configuration = builder.Configuration;
 
         builder.Services.AddDbContext<MyDbContext>(options =>
         {
-            options.UseNpgsql(builder.Configuration.GetConnectionString(nameof(MyDbContext)));
+            options.UseNpgsql(configuration.GetConnectionString(nameof(MyDbContext)));
         });
 
         builder.Services.AddScoped<MyPasswordHasher>();
@@ -32,8 +36,8 @@ public class Program
         builder.Services.AddScoped<DocumentsService>();
         builder.Services.AddScoped<IFileStorageService, MinioStorageService>();
 
-        builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(nameof(JwtOptions)));
-        var jwtOptions = builder.Configuration.GetSection(nameof(JwtOptions)).Get<JwtOptions>();
+        builder.Services.Configure<JwtOptions>(configuration.GetSection(nameof(JwtOptions)));
+        var jwtOptions = configuration["JwtOptions:SecretKey"];
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
             {
@@ -43,7 +47,7 @@ public class Program
                     ValidateAudience = false,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions!.SecretKey))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions))
                 };
                 options.Events = new JwtBearerEvents
                 {
@@ -61,7 +65,7 @@ public class Program
             });
         builder.Services.AddControllers();
         var app = builder.Build();
-
+        
         app.UseDefaultFiles();
         app.UseStaticFiles();
 
@@ -72,7 +76,7 @@ public class Program
             if (requestBody == null || string.IsNullOrWhiteSpace(requestBody.InputText))
             {
                 context.Response.StatusCode = 400;
-                await context.Response.WriteAsync("Текст не может быть пустым.");
+                await context.Response.WriteAsync("пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.");
                 return;
             }
 
@@ -92,7 +96,6 @@ public class Program
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();
-
         app.Run();
     }
 }
