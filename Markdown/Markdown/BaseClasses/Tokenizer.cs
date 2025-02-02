@@ -209,7 +209,7 @@ public class Tokenizer
             if (s[i] == '\\')
             {
                 //Если нечего экранировать символу экранирования
-                if (i+1 <= s.Length - 1 && !allowedTags.Contains(s[i + 1].ToString()))
+                if ((i+1 <= s.Length - 1 && !allowedTags.Contains(s[i + 1].ToString())) || i == s.Length - 1)
                 {
                     characterProcessingSequence[TokenNamesEnum.Escaping].Enqueue(0);
                 }

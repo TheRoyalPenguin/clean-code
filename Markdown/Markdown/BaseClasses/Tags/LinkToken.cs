@@ -23,7 +23,7 @@ public class LinkToken : BaseMarkdownToken, IDoubleTag
     {
         var htmlResultString = string.Join("", Children.Select(child => child.ToHtml()));
         if (htmlResultString.Length > 0) return (GetLink(htmlResultString));
-        else return ("<" + htmlResultString);
+        return ("<" + htmlResultString);
     }
     private string GetLink(string s)
     {
