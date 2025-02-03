@@ -1,10 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebApp.DB.Enums;
 using WebApp.DB.Models;
+using WebApp.Interfaces;
 
 namespace WebApp.DB.Repositories;
 
-public class DocumentsRepository
+public class DocumentsRepository : IDocumentsRepository
 {
     private readonly MyDbContext _dbContext;
 

@@ -1,9 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebApp.DB.Models;
+using WebApp.Interfaces;
 
 namespace WebApp.DB.Repositories;
 
-public class UsersRepository
+public class UsersRepository : IUsersRepository
 {
     private readonly MyDbContext _dbContext;
 

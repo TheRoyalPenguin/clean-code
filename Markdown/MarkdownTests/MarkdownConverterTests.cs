@@ -1,13 +1,15 @@
+using Markdown;
+
 namespace MarkdownTests;
 using Markdown.BaseClasses;
 
-public class MarkdownToHtmlRendererTests
+public class MarkdownConverterTests
 {
-    private readonly MarkdownToHtmlRenderer renderer;
+    private readonly IMarkdownConverter _markdownConverter;
 
-    public MarkdownToHtmlRendererTests()
+    public MarkdownConverterTests()
     {
-        renderer = new MarkdownToHtmlRenderer();
+        _markdownConverter = new MarkdownConverter();
     }
 
     [Theory]
@@ -36,7 +38,7 @@ public class MarkdownToHtmlRendererTests
     
     private void Render_RenderMarkdownToHtml(string markdown, string expectedHtml)
     {
-        var result = renderer.Render(markdown);
+        var result = _markdownConverter.ConvertToHtml(markdown);
 
         Assert.Equal(expectedHtml, result);
     }

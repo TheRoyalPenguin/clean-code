@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApp.DB.DTO;
-using WebApp.JWT;
-using WebApp.Services;
+using WebApp.Interfaces;
 
 namespace WebApp.Controllers;
 
@@ -10,10 +9,10 @@ namespace WebApp.Controllers;
 [Route("api/auth")]
 public class UserController : ControllerBase
 {
-    private readonly UserService _userService;
-    private readonly JwtManager _jwtManager;
+    private readonly IUserService _userService;
+    private readonly IJwtManager _jwtManager;
 
-    public UserController(UserService userService, JwtManager jwtManager)
+    public UserController(IUserService userService, IJwtManager jwtManager)
     {
         _userService = userService;
         _jwtManager = jwtManager;

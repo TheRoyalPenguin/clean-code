@@ -1,13 +1,8 @@
 using System.Text;
-using System.Text.Json;
-using Markdown.BaseClasses;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using WebApp.DB;
-using WebApp.DB.DTO;
-using WebApp.DB.Repositories;
-using WebApp.Interfaces;
 using WebApp.JWT;
 using WebApp.Services;
 
@@ -27,17 +22,19 @@ public class Program
         {
             options.UseNpgsql(configuration.GetConnectionString(nameof(MyDbContext)));
         });
+        
+        builder.Services.AddApplicationServices();
 
-        builder.Services.AddScoped<MyPasswordHasher>();
-        builder.Services.AddScoped<UsersRepository>();
-        builder.Services.AddScoped<DocumentsRepository>();
-        builder.Services.AddScoped<UserService>();
-        builder.Services.AddScoped<JwtManager>();
-        builder.Services.AddScoped<DocumentsService>();
-        builder.Services.AddScoped<IFileStorageService, MinioStorageService>();
-
-        builder.Services.Configure<JwtOptions>(configuration.GetSection(nameof(JwtOptions)));
-        var jwtOptions = configuration["JwtOptions:SecretKey"];
+        var jwtOptionsSection = configuration.GetSection(nameof(JwtOptions));
+        builder.Services.Configure<JwtOptions>(jwtOptionsSection);
+        
+        var jwtOptions = jwtOptionsSection.Get<JwtOptions>();
+        if (string.IsNullOrWhiteSpace(jwtOptions?.SecretKey))
+        {
+            throw new InvalidOperationException("Секретный ключ JWT не настроен!");
+        }
+        
+        var key = Encoding.UTF8.GetBytes(jwtOptions.SecretKey);
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
             {
@@ -47,18 +44,13 @@ public class Program
                     ValidateAudience = false,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions))
+                    IssuerSigningKey = new SymmetricSecurityKey(key)
                 };
                 options.Events = new JwtBearerEvents
                 {
                     OnMessageReceived = context =>
                     {
-                        var path = context.Request.Path.ToString();
-                        if (!context.Request.Path.StartsWithSegments("/markdown-to-html-convert"))
-                        {
-                            context.Token = context.Request.Cookies["jwt-cookies"];
-                        }
-
+                        ExtractJwtToken(context);
                         return Task.CompletedTask;
                     }
                 };
@@ -68,34 +60,18 @@ public class Program
         
         app.UseDefaultFiles();
         app.UseStaticFiles();
-
-        app.MapPost("/markdown-to-html-convert", async (HttpContext context) =>
-        {
-            var requestBody = await JsonSerializer.DeserializeAsync<MarkdownRequest>(context.Request.Body);
-
-            if (requestBody == null || string.IsNullOrWhiteSpace(requestBody.InputText))
-            {
-                context.Response.StatusCode = 400;
-                await context.Response.WriteAsync("����� �� ����� ���� ������.");
-                return;
-            }
-
-            MarkdownToHtmlRenderer renderer = new MarkdownToHtmlRenderer();
-            var htmlText = renderer.Render(requestBody.InputText);
-
-            var response = new
-            {
-                HtmlText = htmlText
-            };
-
-            context.Response.ContentType = "application/json";
-            await context.Response.WriteAsync(JsonSerializer.Serialize(response));
-        });
-
         app.UseRouting();
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();
         app.Run();
+    }
+    
+    private static void ExtractJwtToken(MessageReceivedContext context)
+    {
+        if (!context.Request.Path.StartsWithSegments("/markdown/convert"))
+        {
+            context.Token = context.Request.Cookies["jwt-cookies"];
+        }
     }
 }

@@ -1,8 +1,8 @@
 ﻿namespace Markdown.BaseClasses;
 
-public class MarkdownToHtmlRenderer : IMarkdownProcessor
+public class MarkdownConverter : IMarkdownConverter
 {
-    public string Render(string markdownText)
+    public string ConvertToHtml(string markdownText)
     {
         Tokenizer tokenizer = new Tokenizer();
         string htmlString = tokenizer.Tokenize(markdownText).ToHtml();

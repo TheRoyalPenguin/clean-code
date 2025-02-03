@@ -1,6 +1,8 @@
-﻿namespace WebApp.JWT;
+﻿using WebApp.Interfaces;
 
-public class MyPasswordHasher
+namespace WebApp.JWT;
+
+public class MyPasswordHasher : IPasswordHasher
 {
     public string HashPassword(string password)
     {

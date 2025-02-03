@@ -4,10 +4,11 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.Extensions.Options;
+using WebApp.Interfaces;
 
 namespace WebApp.JWT;
 
-public class JwtManager
+public class JwtManager : IJwtManager
 {
     private readonly JwtOptions _options;
     public JwtManager(IOptions<JwtOptions> options)

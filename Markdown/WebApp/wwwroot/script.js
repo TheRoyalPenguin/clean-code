@@ -272,7 +272,7 @@ function showForm(formType) {
 
 async function processMarkdownText(inputText) {
     try {
-        const response = await fetch("/markdown-to-html-convert", {
+        const response = await fetch("/markdown/convert", {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ InputText: inputText })
@@ -280,7 +280,7 @@ async function processMarkdownText(inputText) {
 
         const result = await response.json();
         if (response.ok) {
-            outputField.innerHTML = result.HtmlText;
+            outputField.innerHTML = result.htmlText;
         } else {
             console.log('Ошибка.');
         }

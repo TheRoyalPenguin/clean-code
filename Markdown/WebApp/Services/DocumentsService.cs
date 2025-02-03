@@ -1,17 +1,16 @@
 ﻿using WebApp.DB.DTO;
 using WebApp.DB.Enums;
 using WebApp.DB.Models;
-using WebApp.DB.Repositories;
 using WebApp.Interfaces;
 
 namespace WebApp.Services;
 
-public class DocumentsService
+public class DocumentsService : IDocumentsService
 {
-    private readonly DocumentsRepository _documentsRepository;
-    private readonly UsersRepository _usersRepository;
+    private readonly IDocumentsRepository _documentsRepository;
+    private readonly IUsersRepository _usersRepository;
     private readonly IFileStorageService _fileStorageService;
-    public DocumentsService(DocumentsRepository documentsRepository, UsersRepository usersRepository, IFileStorageService fileStorageService)
+    public DocumentsService(IDocumentsRepository documentsRepository, IUsersRepository usersRepository, IFileStorageService fileStorageService)
     {
         _documentsRepository = documentsRepository;
         _usersRepository = usersRepository;

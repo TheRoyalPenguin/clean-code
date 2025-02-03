@@ -1,14 +1,13 @@
 ﻿using WebApp.DB.Models;
-using WebApp.DB.Repositories;
-using WebApp.JWT;
+using WebApp.Interfaces;
 
 namespace WebApp.Services;
 
-public class UserService
+public class UserService : IUserService
 {
-    private readonly UsersRepository _usersRepository;
-    private readonly MyPasswordHasher _passwordHasher;
-    public UserService(UsersRepository usersRepository, MyPasswordHasher passwordHasher)
+    private readonly IUsersRepository _usersRepository;
+    private readonly IPasswordHasher _passwordHasher;
+    public UserService(IUsersRepository usersRepository, IPasswordHasher passwordHasher)
     {
         _usersRepository = usersRepository;
         _passwordHasher = passwordHasher;
