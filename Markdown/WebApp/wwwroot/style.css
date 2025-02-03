@@ -217,7 +217,6 @@ button:active {
     width: 300px;
 }
 
-/* сетка документов */
 .gridContainer {
     display: flex;
     flex-wrap: wrap;
@@ -276,6 +275,7 @@ button:active {
 }
 
 #permissionForm {
+    display: none;
     max-width: 400px;
     margin: 20px auto;
     padding: 20px;
@@ -284,7 +284,6 @@ button:active {
     background-color: #f9f9f9;
 }
 
-/* форма предоставления доступа к документу*/
 #permissionForm {
     background-color: #2d2a4a;
     border: 2px solid #514b82;

@@ -19,5 +19,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IFileStorageService, MinioStorageService>();
         services.AddScoped<IMarkdownConverter, MarkdownConverter>();
         services.AddScoped<IMarkdownService, MarkdownService>();
+        services.AddScoped<IAuthValidator, AuthValidator>();
     }
 }

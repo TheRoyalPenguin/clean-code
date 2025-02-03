@@ -11,16 +11,24 @@ public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
     private readonly IJwtManager _jwtManager;
+    private readonly IAuthValidator _authValidator;
 
-    public UserController(IUserService userService, IJwtManager jwtManager)
+    public UserController(IUserService userService, IJwtManager jwtManager, IAuthValidator authValidator)
     {
         _userService = userService;
         _jwtManager = jwtManager;
+        _authValidator = authValidator;
     }
 
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterRequest request)
     {
+        var errors = _authValidator.ValidateRegistration(request);
+        if (errors.Any())
+        {
+            return BadRequest(new { Message = errors.FirstOrDefault() });
+        }
+        
         var resultRegisterUser = await _userService.RegisterAsync(request.Username, request.Email, request.Password);
         if (!resultRegisterUser.IsSuccess)
         {
@@ -33,6 +41,12 @@ public class UserController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
+        var errors = _authValidator.ValidateLogin(request);
+        if (errors.Any())
+        {
+            return BadRequest(new { Message = errors.FirstOrDefault() });
+        }
+        
         var user = await _userService.LoginAsync(request.Email, request.Password);
 
         if (user == null)

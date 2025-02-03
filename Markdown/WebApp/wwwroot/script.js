@@ -26,7 +26,7 @@ const loginForm = document.getElementById('loginForm');
 const registerForm = document.getElementById('registerForm');
 const errorAuthMessage = document.getElementById('errorAuthMessage');
 
-
+const permissionForm = document.getElementById('permissionForm');
 const accessFormEmail = document.getElementById("accessFormEmail");
 const permission = document.getElementById("permission");
 const accessForm = document.getElementById("accessForm");
@@ -41,8 +41,20 @@ let setHtmlTimer;
 documentClick(sessionStorage.getItem('currentDocumentId') || null);
 setHtmlTextToOutputField();
 
+async function initAuthorise() {
+    const isAuthorized = await isAuthorised();
+    if (isAuthorized) {
+        permissionForm.style.display = 'block';
+    }
+}
+
+initAuthorise();
+
 inputField.addEventListener("input", async () => {
-    await saveMarkdown();
+    const isAuthorized = await isAuthorised();
+    if (isAuthorized) {
+        saveMarkdown();
+    }
     await setHtmlTextToOutputField();
 });
 
@@ -135,6 +147,11 @@ myDocumentsButton.addEventListener('click', async () => {
 })
 
 shareDocumentSettingsButton.addEventListener('click', async () => {
+    const isAuthorized = await isAuthorised();
+    if (!isAuthorized) {
+        openAuthContainer();
+        return;
+    }
     showShareDocumentSettings();
 })
 
@@ -147,6 +164,11 @@ saveInputButton.addEventListener('click', async () => {
 })
 
 async function saveMarkdown() {
+    const isAuthorized = await isAuthorised();
+    if (!isAuthorized) {
+        openAuthContainer();
+        return;
+    }
     clearTimeout(saveMarkdownTimer);
     saveMarkdownTimer = setTimeout(async () => {
         const inputText = inputField.value;
@@ -212,6 +234,7 @@ async function register() {
 
         if (!response.ok) {
             const errorData = await response.json();
+            errorAuthMessage.textContent = errorData.message;
             throw new Error(errorData.message || "Ошибка регистрации.");
         }
 
@@ -226,7 +249,7 @@ async function login(email = null, password = null) {
     password = password || document.getElementById('loginPassword').value;
 
     if (!email || !password) {
-        errorAuthMessage.textContent("Все поля должны быть заполнены!");
+        errorAuthMessage.textContent = "Все поля должны быть заполнены!";
         return;
     }
 
@@ -242,11 +265,13 @@ async function login(email = null, password = null) {
 
         if (!response.ok) {
             const errorData = await response.json();
+            errorAuthMessage.textContent = errorData.message;
             throw new Error(errorData.message || "Ошибка входа.");
         }
 
-        const data = await response.json();
-        window.location.href = "/";
+        await response.json();
+        changeTextTemporarily(messageField, 'Вы вошли в аккаунт', 'green', 5000);
+        await displayAuthorisedContainers();
     } catch (error) {
         errorAuthMessage.textContent = error.message || "Ошибка входа.";
     }
@@ -356,8 +381,22 @@ function closeAuthContainer() {
     authContainer.style.display = 'none';
 }
 
+function openAuthContainer() {
+    authContainer.style.display = 'block';
+    showForm('register')
+}
+
 function closeShareDocumentSettingsContainer() {
     shareDocumentSettingsContainer.style.display = 'none';
+}
+
+async function displayAuthorisedContainers()
+{
+    const isAuthorized = await isAuthorised();
+    if (isAuthorized) {
+        closeAuthContainer();
+        permissionForm.style.display = 'block';
+    }
 }
 
 async function getProfile() {
@@ -383,6 +422,26 @@ async function getProfile() {
     }
 
     return true;
+}
+
+async function isAuthorised() {
+    try {
+        const response = await fetch('api/auth/profile', {
+            method: 'GET',
+            credentials: 'include', // включает куки в запрос
+        });
+
+        if (response.ok) {
+            console.log('Авторизован');
+            return true;
+        } else {
+            console.log('Не авторизован');
+            return false;
+        }
+    } catch (error) {
+        console.error('Ошибка проверки авторизации: ', error);
+        return false;
+    }
 }
 
 async function logout() {
