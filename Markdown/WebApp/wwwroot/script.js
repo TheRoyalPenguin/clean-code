@@ -237,7 +237,7 @@ async function login(email = null, password = null) {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ email, password }),
-            credentials: 'include', // для работы с куками
+            credentials: 'include' // для работы с куками
         });
 
         if (!response.ok) {
@@ -251,7 +251,6 @@ async function login(email = null, password = null) {
         errorAuthMessage.textContent = error.message || "Ошибка входа.";
     }
 }
-
 function showForm(formType) {
     const buttons = document.querySelectorAll('.tabButton');
 

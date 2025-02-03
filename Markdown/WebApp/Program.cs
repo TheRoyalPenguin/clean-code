@@ -55,6 +55,7 @@ public class Program
                     }
                 };
             });
+        
         builder.Services.AddControllers();
         var app = builder.Build();
         
@@ -69,9 +70,6 @@ public class Program
     
     private static void ExtractJwtToken(MessageReceivedContext context)
     {
-        if (!context.Request.Path.StartsWithSegments("/markdown/convert"))
-        {
-            context.Token = context.Request.Cookies["jwt-cookies"];
-        }
+        context.Token = context.Request.Cookies["jwt-cookies"];
     }
 }
