@@ -15,6 +15,7 @@ public class Tokenizer : ITokenizer
     {
         characterProcessingSequenceManager = new CharacterProcessingSequenceManager();
         stringManipulator = new StringManipulator();
+        pointerStackManager = new PointerStackManager();
     }
     public MainToken Tokenize(string markdownText)
     {
